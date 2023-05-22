@@ -57,9 +57,38 @@ class ChatViewModel @Inject constructor(
             messages
         ) { conversation, messages ->
             if (conversation != null) {
-                val messagesBySendTime =
-                    messages.groupBy { it.sendTime.localDate }
-                        .toSortedMap(Comparator.reverseOrder())
+
+                for (i in messages.count() - 1 downTo 1) {
+
+                    var previousMessage = messages[i];
+                    var nextMessage = messages[i - 1];
+
+                    if (nextMessage.isMine) {
+                        if (previousMessage.isMine) {
+                            previousMessage.isLastFromSeries = false;
+                            nextMessage.isLastFromSeries = true;
+                        }
+
+                        else if (!previousMessage.isMine) {
+                            previousMessage.isLastFromSeries = true;
+                            nextMessage.isLastFromSeries = true;
+                        }
+                    }
+
+                    if (!nextMessage.isMine) {
+                        if (previousMessage.isMine) {
+                            previousMessage.isLastFromSeries = true;
+                            nextMessage.isLastFromSeries = true;
+                        }
+
+                        else if (!previousMessage.isMine) {
+                            previousMessage.isLastFromSeries = false;
+                            nextMessage.isLastFromSeries = true;
+                        }
+                    }
+                }
+
+                val messagesBySendTime = messages.groupBy { it.sendTime.localDate }.toSortedMap(Comparator.reverseOrder())
 
                 ChatUiState.Success(contactId, conversation, messagesBySendTime)
             } else {
@@ -76,6 +105,8 @@ class ChatViewModel @Inject constructor(
             )
 
     fun sendMessage(text: String) {
+
+
         currentChatState.cancelSendingPausedState()
         viewModelScope.launch {
             messagesRepository.addMessage(
