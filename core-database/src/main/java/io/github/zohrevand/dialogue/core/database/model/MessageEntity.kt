@@ -21,7 +21,8 @@ data class MessageEntity(
     @ColumnInfo(name = "send_time")
     val sendTime: Instant,
     val status: MessageStatus,
-    val isLastFromSeries: Boolean
+    val isLastFromSeries: Boolean,
+    val isFirstFromSeries: Boolean
 )
 
 fun MessageEntity.asExternalModel() = Message(
@@ -31,5 +32,6 @@ fun MessageEntity.asExternalModel() = Message(
     body = body,
     sendTime = sendTime,
     status = status,
-    isLastFromSeries = isLastFromSeries
+    isLastFromSeries = isLastFromSeries,
+    isFirstFromSeries = isFirstFromSeries
 )

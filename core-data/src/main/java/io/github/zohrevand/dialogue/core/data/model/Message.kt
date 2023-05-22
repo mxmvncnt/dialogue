@@ -10,5 +10,6 @@ fun Message.asEntity() = MessageEntity(
     body = body,
     sendTime = sendTime,
     status = status,
-    isLastFromSeries = isLastFromSeries
+    isLastFromSeries = isLastFromSeries,
+    isFirstFromSeries = isFirstFromSeries
 )

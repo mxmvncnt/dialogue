@@ -14,7 +14,8 @@ data class Message(
     val body: String,
     val sendTime: Instant = Clock.System.now(),
     val status: MessageStatus,
-    var isLastFromSeries: Boolean
+    var isLastFromSeries: Boolean,
+    var isFirstFromSeries: Boolean
 ) {
     // This message has been sent by current logged-in account
     val isMine: Boolean
@@ -30,7 +31,8 @@ data class Message(
                 peerJid = peerJid,
                 body = text,
                 status = ShouldSend,
-                isLastFromSeries = false
+                isLastFromSeries = false,
+                isFirstFromSeries = false
             )
 
         fun createReceivedMessage(stanzaId: String, text: String, peerJid: String): Message =
@@ -39,7 +41,8 @@ data class Message(
                 peerJid = peerJid,
                 body = text,
                 status = Received,
-                isLastFromSeries = false
+                isLastFromSeries = false,
+                isFirstFromSeries = false
             )
     }
 }
