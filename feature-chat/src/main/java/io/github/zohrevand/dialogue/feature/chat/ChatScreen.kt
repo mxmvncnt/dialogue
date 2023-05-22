@@ -149,7 +149,7 @@ fun ChatScreen(
             LazyColumn(
                 reverseLayout = true,
                 state = scrollState,
-                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
+                verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
                 contentPadding = PaddingValues(all = 16.dp),
                 modifier = Modifier
                     .fillMaxSize()
@@ -251,7 +251,8 @@ private fun MessageItem(
     message: Message,
     modifier: Modifier = Modifier
 ) {
-    val style = getMessageStyle(message.isMine)
+
+    val style = getMessageStyle(message.isMine, message.isLastFromSeries)
 
     Box(
         contentAlignment = style.alignment,
@@ -261,14 +262,16 @@ private fun MessageItem(
             color = style.containerColor,
             shape = style.shape
         ) {
-            Column(modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+            Column(modifier = modifier.padding(horizontal = 8.dp, vertical = 8.dp)) {
                 MessageBody(message)
-                MessageSubtitle(
-                    message = message,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(top = 8.dp)
-                )
+                if (message.isLastFromSeries) {
+                    MessageSubtitle(
+                        message = message,
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(top = 8.dp)
+                    )
+                }
             }
         }
     }
@@ -379,18 +382,38 @@ private fun ChatInput(
 }
 
 @Composable
-private fun getMessageStyle(isMine: Boolean): MessageStyle {
-    return if (isMine) {
-        MessageStyle(
-            alignment = Alignment.CenterEnd,
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+private fun getMessageStyle(isMine: Boolean, isMessageLastFromSeries: Boolean): MessageStyle {
+    if (isMine && isMessageLastFromSeries) {
+        return (
+            MessageStyle(
+                alignment = Alignment.CenterEnd,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+            )
+        )
+    } else if (isMine) {
+        return (
+            MessageStyle(
+                alignment = Alignment.CenterEnd,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(20.dp, 4.dp, 4.dp, 20.dp)
+            )
+        )
+    } else if (isMessageLastFromSeries) {
+        return (
+            MessageStyle(
+                alignment = Alignment.CenterStart,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp),
+            )
         )
     } else {
-        MessageStyle(
-            alignment = Alignment.CenterStart,
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            shape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
+        return (
+            MessageStyle(
+                alignment = Alignment.CenterStart,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 4.dp)
+            )
         )
     }
 }
