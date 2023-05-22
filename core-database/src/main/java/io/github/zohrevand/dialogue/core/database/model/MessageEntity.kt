@@ -20,7 +20,8 @@ data class MessageEntity(
     val body: String,
     @ColumnInfo(name = "send_time")
     val sendTime: Instant,
-    val status: MessageStatus
+    val status: MessageStatus,
+    val isLastFromSeries: Boolean
 )
 
 fun MessageEntity.asExternalModel() = Message(
@@ -29,5 +30,6 @@ fun MessageEntity.asExternalModel() = Message(
     peerJid = peerJid,
     body = body,
     sendTime = sendTime,
-    status = status
+    status = status,
+    isLastFromSeries = isLastFromSeries
 )
